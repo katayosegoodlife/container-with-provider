@@ -26,7 +26,7 @@ interface InstantiatorInterface {
     + object instantiate(string $className)
 }
 
-TypeBasedContainerWithProviderAbstract <|-- TypeBasedContainerInterface
+TypeBasedContainerWithProviderAbstract --|> TypeBasedContainerInterface
 TypeBasedContainerWithProviderAbstract --> InstantiatorInterface
 TypeBasedContainerWithProviderAbstract --> ProviderAbstract
 TypeBasedContainerWithProviderAbstract --> ObjectDefinitionRegister
