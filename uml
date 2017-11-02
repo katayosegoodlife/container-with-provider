@@ -1,0 +1,36 @@
+@startuml
+abstract class ProviderAbstract {
+    + static void register(ObjectDefinitionRegister)
+    + object getInstance()
+}
+class ObjectDefinitionRegister {
+    + __construct(ObjectDifinitionTransport)
+    + this register(string $name, type $string)
+    + this registerAsSingleton(string $name, type $string)
+}
+class ObjectDefinitionTransport {
+    + void add(string, string, bool)
+    + array get()
+}
+abstract class TypeBasedContainerWithProviderAbstract {
+    - string providerBaseClass
+    - InstantiatorInterface instantiator
+    + object get(string $name, ?string $type)
+    + bool has(string $name, ?string $type)
+}
+interface TypeBasedContainerInterface {
+    + object get(string $name, ?string $type)
+    + bool   has(string $name, ?string $type)
+}
+interface InstantiatorInterface {
+    + object instantiate(string $className)
+}
+
+TypeBasedContainerWithProviderAbstract <|-- TypeBasedContainerInterface
+TypeBasedContainerWithProviderAbstract --> InstantiatorInterface
+TypeBasedContainerWithProviderAbstract --> ProviderAbstract
+TypeBasedContainerWithProviderAbstract --> ObjectDefinitionRegister
+TypeBasedContainerWithProviderAbstract --> ObjectDefinitionTransport
+ProviderAbstract --> ObjectDefinitionRegister
+ObjectDefinitionRegister --> ObjectDefinitionTransport
+@enduml

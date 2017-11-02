@@ -1,2 +1,4 @@
-# container-with-provider
-Type-based Container with Object Provider
+# Type-based Container with Object Provider
+
+# Class Diagram
+![class diagram](http://www.plantuml.com/plantuml/png/dLJDJi904BxtAURG0qJw1aQ3UE6YHaayac4xb35rb-oE90HvTxUrssAX1UcjE_FzpMHNvUWSl5YpuPJiUE74eXBOHU2_6t22mWesXbEmbB4JieFdnGSfUQGbQnOs-hKg3ADzf4g-hewQTpvNHdkjBoM1ZaFppA9sQsDbM3NBYbsZxb6iCuWrVj88PBicY7_FJlQFtPilvIH6zqAxhDTkQk_bC31DMtJXhw0TmSAO769kn8Cvj1Qta94C6isPXpoWetHYj21hikyigx2KIZW92klgl41C2dnLdlg1eXP6CNQgVVGbAW8-EAqic39YwU5lXFl33C5mcMI5hhzt7t4jUHodiRExtWFypyNfSRJqc-bGpLpkvCdJ5tpHcTtSVYT9N-1p-2IvE-tq4c3xsbw2wRgQrs3hkn4TFI2zKftFGw_83m00)
