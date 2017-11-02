@@ -25,6 +25,14 @@ interface TypeBasedContainerInterface {
 interface InstantiatorInterface {
     + object instantiate(string $className)
 }
+class ProviderRegister {
+    + __construct(ProviderTransport)
+    + this register(string $name, bool $quickLoad = false)
+}
+class ProviderTransport {
+    + void add(string, bool)
+    + array get()
+}
 
 TypeBasedContainerWithProviderAbstract --|> TypeBasedContainerInterface
 TypeBasedContainerWithProviderAbstract --> InstantiatorInterface
@@ -33,4 +41,7 @@ TypeBasedContainerWithProviderAbstract --> ObjectDefinitionRegister
 TypeBasedContainerWithProviderAbstract --> ObjectDefinitionTransport
 ProviderAbstract --> ObjectDefinitionRegister
 ObjectDefinitionRegister --> ObjectDefinitionTransport
+TypeBasedContainerWithProviderAbstract --> ProviderTransport
+TypeBasedContainerWithProviderAbstract --> ProviderRegister
+ProviderRegister --> ProviderTransport
 @enduml
