@@ -202,15 +202,8 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         }
 
         if (isset($this->typeObjectName[$type])) {
-            if (count($this->typeObjectName[$type]) === 1) {
-                return $this->foundReturn($sig, $this->typeObjectName[$type][0]);
-            }
-            foreach ($this->typeObjectName[$type] as $candidateName) {
-                if ($candidateName === $uName) {
-                    return $this->foundReturn($sig, $uName);
-                }
-            }
-            return $this->cache[$sig] = self::SOLVE_TOOMANY;
+            $typeBaseCandidates = $this->typeObjectName[$type];
+            return $this->solveWithExactType($typeBasedCandidates, $sig, $uName);
         }
 
         $candidates = [];
@@ -226,6 +219,19 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         }
         if ($c === 1 && count($candidates[0]) === 1) {
             return $this->foundReturn($sig, $candidates[0][0]);
+        }
+        return $this->cache[$sig] = self::SOLVE_TOOMANY;
+    }
+
+    private function solveWithExactType(array $typeBasedCandidates, string $sig, string $uName)
+    {
+        if (count($typeBaseCandidates) === 1) {
+            return $this->foundReturn($sig, $typeBaseCandidates[0]);
+        }
+        foreach ($typeBaseCandidates as $candidateName) {
+            if ($candidateName === $uName) {
+                return $this->foundReturn($sig, $uName);
+            }
         }
         return $this->cache[$sig] = self::SOLVE_TOOMANY;
     }
