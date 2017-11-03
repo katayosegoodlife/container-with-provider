@@ -40,6 +40,8 @@ use Bellisq\ContainerWithProvider\Exceptions\{
 abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContainerInterface
 {
 
+    abstract static protected function registerProviders(ProviderRegister $pr): void;
+
     /** @var InstantiatorInterface */
     private $instantiator;
 
@@ -124,20 +126,18 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         $this->providers[$providerName] = null;
     }
 
-    private function registerObject(string $providerName, string $name, string $type, bool $isSingleton): void
+    private function registerObject(string $providerName, string $objectName, string $objectType, bool $isSingleton): void
     {
-        if (!$this->objectNameValidator->validate($name)) {
+        if (!$this->objectNameValidator->validate($objectName)) {
             throw new InvalidObjectNameException;
         }
-        if (isset($this->objectProvider[$name])) {
+        if (isset($this->objectProvider[$objectName])) {
             throw new ObjectNameConflictionException;
         }
-        $this->objectProvider[$name]   = $providerName;
-        $this->isSingleton[$name]      = $isSingleton;
-        $this->typeObjectName[$type][] = $name;
+        $this->objectProvider[$objectName]   = $providerName;
+        $this->isSingleton[$objectName]      = $isSingleton;
+        $this->typeObjectName[$objectType][] = $objectName;
     }
-
-    abstract static protected function registerProviders(ProviderRegister $pr): void;
 
     private function getInstance(string $validatedObjectName)
     {
@@ -145,7 +145,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         if (is_null($this->providers[$providerName])) {
             $this->loadProvider($providerName);
         }
-        
+
         if ($this->isSingleton[$validatedObjectName]) {
             if (isset($this->singletonObjects[$validatedObjectName])) {
                 return $this->singletonObjects[$validatedObjectName];
