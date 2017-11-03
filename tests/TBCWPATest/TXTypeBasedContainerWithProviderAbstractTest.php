@@ -11,9 +11,12 @@ use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleClass
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleClassParent;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidNameProvider\TXInvalidNameProviderContainer;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidNameProvider\TXInvalidNameProviderInstantiator;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\DuplicateNameProvider\TXDuplicateNameProviderContainer;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\DuplicateNameProvider\TXDuplicateNameProviderInstantiator;
 use Bellisq\ContainerWithProvider\Exceptions\{
     NotFoundException,
-    InvalidProviderException
+    InvalidProviderException,
+    DuplicateProviderException
 };
 
 
@@ -62,6 +65,12 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
     {
         $this->expectException(InvalidProviderException::class);
         new TXInvalidNameProviderContainer(new ProviderClassValidator(ProviderAbstract::class), new TXInvalidNameProviderInstantiator);
+    }
+    
+    public function testDuplicateNameProvider()
+    {
+        $this->expectException(DuplicateProviderException::class);
+        new TXDuplicateNameProviderContainer(new ProviderClassValidator(ProviderAbstract::class), new TXDuplicateNameProviderInstantiator);
     }
 
 }
