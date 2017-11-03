@@ -192,28 +192,22 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
     {
         $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
         $sig   = self::generateSignature($uName, $type);
-        if (isset($this->cache[$sig]))
+
+        if (isset($this->cache[$sig])) {
             return $this->cache[$sig];
+        }
+
         if (is_null($type)) {
-            if (is_null($uName)) {
-                return $this->cache[$sig] = self::SOLVE_NOT_FOUND;
-            }
-            if (isset($this->objectProvider[$uName])) {
-                $this->nameCache[$sig] = $uName;
-                return $this->cache[$sig]     = self::SOLVE_FOUND;
-            }
-            return $this->cache[$sig] = self::SOLVE_NOT_FOUND;
+            return $this->solveWithoutType($uName, $sig);
         }
 
         if (isset($this->typeObjectName[$type])) {
             if (count($this->typeObjectName[$type]) === 1) {
-                $this->nameCache[$sig] = $this->typeObjectName[$type][0];
-                return $this->cache[$sig]     = self::SOLVE_FOUND;
+                return $this->foundReturn($sig, $this->typeObjectName[$type][0]);
             }
             foreach ($this->typeObjectName[$type] as $candidateName) {
                 if ($candidateName === $uName) {
-                    $this->nameCache[$sig] = $uName;
-                    return $this->cache[$sig]     = self::SOLVE_FOUND;
+                    return $this->foundReturn($sig, $uName);
                 }
             }
             return $this->cache[$sig] = self::SOLVE_TOOMANY;
@@ -231,13 +225,27 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
             return $this->cache[$sig] = self::SOLVE_NOT_FOUND;
         }
         if ($c === 1 && count($candidates[0]) === 1) {
-            $this->nameCache[$sig] = $candidates[0][0];
-            return $this->cache[$sig]     = self::SOLVE_FOUND;
+            return $this->foundReturn($sig, $candidates[0][0]);
         }
         return $this->cache[$sig] = self::SOLVE_TOOMANY;
     }
 
-    private static function exceptionThrow(int $result) : Throwable
+    private function solveWithoutType(?string $uName, string $sig)
+    {
+        if (!is_null($uName) && isset($this->objectProvider[$uName])) {
+            return $this->foundReturn($sig, $uName);
+        }
+        return $this->cache[$sig] = self::SOLVE_NOT_FOUND;
+    }
+
+    private function foundReturn(string $sig, string $objectName)
+    {
+        $this->nameCache[$sig] = $objectName;
+
+        return $this->cache[$sig] = self::SOLVE_FOUND;
+    }
+
+    private static function exceptionThrow(int $result): Throwable
     {
         if ($result === self::SOLVE_TOOMANY) {
             return new TooManyCandidatesException;
