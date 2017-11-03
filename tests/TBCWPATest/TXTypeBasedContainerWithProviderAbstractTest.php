@@ -15,11 +15,15 @@ use Bellisq\ContainerWithProvider\Tests\TBCWPATest\DuplicateNameProvider\TXDupli
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\DuplicateNameProvider\TXDuplicateNameProviderInstantiator;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidObjectNameProvider\TXInvalidObjectNameProviderContainer;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidObjectNameProvider\TXInvalidObjectNameProviderInstantiator;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidObjectTypeProvider\TXInvalidObjectTypeProviderContainer;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidObjectTypeProvider\TXInvalidObjectTypeProviderInstantiator;
+use Bellisq\Validator\General\SubclassValidator;
 use Bellisq\ContainerWithProvider\Exceptions\{
     NotFoundException,
     InvalidProviderException,
     DuplicateProviderException,
-    InvalidObjectNameException
+    InvalidObjectNameException,
+    InvalidObjectTypeException
 };
 
 
@@ -75,11 +79,17 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
         $this->expectException(DuplicateProviderException::class);
         new TXDuplicateNameProviderContainer(new TXDuplicateNameProviderInstantiator);
     }
-    
+
     public function testInvalidObjectName()
     {
         $this->expectException(InvalidObjectNameException::class);
         new TXInvalidObjectNameProviderContainer(new TXInvalidObjectNameProviderInstantiator);
+    }
+
+    public function testInvalidObjectType()
+    {
+        $this->expectException(InvalidObjectTypeException::class);
+        new TXInvalidObjectTypeProviderContainer(new TXInvalidObjectTypeProviderInstantiator, null, new SubclassValidator(TestCase::class));
     }
 
 }
