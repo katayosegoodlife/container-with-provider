@@ -53,6 +53,20 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
         $this->assertInstanceOf(TXSimpleClass::class, $sc->get('334_invalid_name', TXSimpleClass::class));
         $this->assertInstanceOf(TXSimpleClass::class, $sc->get('simpleObj', TXSimpleClassParent::class));
         $this->assertInstanceOf(TXSimpleClass::class, $sc->get('334_invalid_name', TXSimpleClassParent::class));
+        $this->assertTrue($sc->has('simpleObj', TXSimpleClass::class));
+        $this->assertTrue($sc->has('simpleObj'));
+        $this->assertTrue($sc->has('334_invalid_name', TXSimpleClass::class));
+        $this->assertTrue($sc->has('simpleObj', TXSimpleClassParent::class));
+        $this->assertTrue($sc->has('334_invalid_name', TXSimpleClassParent::class));
+    }
+
+    public function testSimpleContainerNotFound()
+    {
+        $sc = $this->simpleContainer;
+        $this->assertFalse($sc->has('334_invalid_name'));
+        $this->assertFalse($sc->has('simpleObj', 'INVALID_CLASS'));
+        $this->assertFalse($sc->has(null, 'INVALID_CLASS'));
+        $this->assertFalse($sc->has('valid_name'));
     }
 
     public function testSimpleContainerFail1()
