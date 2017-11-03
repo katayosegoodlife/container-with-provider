@@ -47,16 +47,13 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
 
     public function get($name, ?string $type = null)
     {
-        switch ($this->solveName($name, $type)) {
-            case self::SOLVE_FOUND:
-                $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
-                $sig   = $this->generateSignature($uName, $type);
-                return $this->getInstance($this->nameCache[$sig]);
-            case self::SOLVE_TOOMANY:
-                throw new TooManyCandidatesException;
-            case self::SOLVE_NOT_FOUND:
-            default:
-                throw new NotFoundException;
+        $solveResult = $this->solveName($name, $type);
+        if (self::SOLVE_FOUND === $solveResult) {
+            $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
+            $sig   = $this->generateSignature($uName, $type);
+            return $this->getInstance($this->nameCache[$sig]);
+        } else {
+            self::exceptionThrow($solveResult);
         }
     }
 
@@ -278,6 +275,14 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
             return $this->cache[$sig]     = self::SOLVE_FOUND;
         }
         return $this->cache[$sig] = self::SOLVE_TOOMANY;
+    }
+
+    private static function exceptionThrow(int $result)
+    {
+        if ($result === self::SOLVE_TOOMANY) {
+            throw new TooManyCandidatesException;
+        }
+        throw new NotFoundException;
     }
 
 }
