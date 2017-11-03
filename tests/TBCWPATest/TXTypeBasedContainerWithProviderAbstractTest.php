@@ -50,16 +50,16 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
         $sc = $this->simpleContainer;
         $this->assertInstanceOf(TXSimpleClass::class, $sc->get('simpleObj', TXSimpleClass::class));
         $this->assertInstanceOf(TXSimpleClass::class, $sc->get('simpleObj'));
-        $this->assertInstanceOf(TXSimpleClass::class, $sc->get('334', TXSimpleClass::class));
+        $this->assertInstanceOf(TXSimpleClass::class, $sc->get('334_invalid_name', TXSimpleClass::class));
         $this->assertInstanceOf(TXSimpleClass::class, $sc->get('simpleObj', TXSimpleClassParent::class));
-        $this->assertInstanceOf(TXSimpleClass::class, $sc->get('334', TXSimpleClassParent::class));
+        $this->assertInstanceOf(TXSimpleClass::class, $sc->get('334_invalid_name', TXSimpleClassParent::class));
     }
 
     public function testSimpleContainerFail1()
     {
         $sc = $this->simpleContainer;
         $this->expectException(NotFoundException::class);
-        $sc->get('334');
+        $sc->get('334_invalid_name');
     }
 
     public function testSimpleContainerFail2()
@@ -74,6 +74,13 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
         $sc = $this->simpleContainer;
         $this->expectException(NotFoundException::class);
         $sc->get(null, 'INVALID_CLASS');
+    }
+
+    public function testSimpleContainerFail4()
+    {
+        $sc = $this->simpleContainer;
+        $this->expectException(NotFoundException::class);
+        $sc->get('valid_name');
     }
 
     public function testInvalidNameProvider()
