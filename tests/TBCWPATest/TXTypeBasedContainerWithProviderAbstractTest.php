@@ -22,6 +22,8 @@ use Bellisq\ContainerWithProvider\Tests\TBCWPATest\NameConflictionProvider\TXNam
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\NameConflictionProvider\TXNameConflictionProviderInstantiator;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\TypeErrorContainer\TXTypeErrorContainer;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\TypeErrorContainer\TXTypeErrorProviderInstantiator;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SingletonSimpleContainer\TXSingletonSimpleContainer;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SingletonSimpleContainer\TXSingletonSimpleProviderInstantiator;
 use Bellisq\ContainerWithProvider\Exceptions\{
     NotFoundException,
     InvalidProviderException,
@@ -110,4 +112,19 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
         $t = new TXTypeErrorContainer(new TXTypeErrorProviderInstantiator);
         $t->get('typeErrorObj');
     }
+
+    public function testFactory()
+    {
+        $sc = $this->simpleContainer;
+        $this->assertTrue($sc->get('simpleObj') == $sc->get('simpleObj'));
+        $this->assertFalse($sc->get('simpleObj') === $sc->get('simpleObj'));
+    }
+
+    public function testSingleton()
+    {
+        $sc = new TXSingletonSimpleContainer(new TXSingletonSimpleProviderInstantiator);
+        $this->assertTrue($sc->get('singletonSimpleObj') == $sc->get('singletonSimpleObj'));
+        $this->assertTrue($sc->get('singletonSimpleObj') === $sc->get('singletonSimpleObj'));
+    }
+
 }
