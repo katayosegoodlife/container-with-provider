@@ -2,6 +2,7 @@
 
 namespace Bellisq\ContainerWithProvider;
 
+use Throwable;
 use Bellisq\TypeBasedContainer\TypeBasedContainerInterface;
 use Bellisq\Instantiator\InstantiatorInterface;
 use Bellisq\Validator\{
@@ -55,7 +56,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
             return $this->getInstance($this->nameCache[$sig]);
         }
 
-        self::exceptionThrow($solveResult);
+        throw self::exceptionThrow($solveResult);
     }
 
     public function has($name, ?string $type = null): bool
@@ -236,12 +237,12 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         return $this->cache[$sig] = self::SOLVE_TOOMANY;
     }
 
-    private static function exceptionThrow(int $result)
+    private static function exceptionThrow(int $result) : Throwable
     {
         if ($result === self::SOLVE_TOOMANY) {
-            throw new TooManyCandidatesException;
+            return new TooManyCandidatesException;
         }
-        throw new NotFoundException;
+        return new NotFoundException;
     }
 
     private const SOLVE_FOUND     = 1;
