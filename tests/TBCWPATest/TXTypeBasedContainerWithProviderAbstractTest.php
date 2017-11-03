@@ -13,10 +13,13 @@ use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidNameProvider\TXInvalid
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidNameProvider\TXInvalidNameProviderInstantiator;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\DuplicateNameProvider\TXDuplicateNameProviderContainer;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\DuplicateNameProvider\TXDuplicateNameProviderInstantiator;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidObjectNameProvider\TXInvalidObjectNameProviderContainer;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidObjectNameProvider\TXInvalidObjectNameProviderInstantiator;
 use Bellisq\ContainerWithProvider\Exceptions\{
     NotFoundException,
     InvalidProviderException,
-    DuplicateProviderException
+    DuplicateProviderException,
+    InvalidObjectNameException
 };
 
 
@@ -71,6 +74,12 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
     {
         $this->expectException(DuplicateProviderException::class);
         new TXDuplicateNameProviderContainer(new TXDuplicateNameProviderInstantiator);
+    }
+    
+    public function testInvalidObjectName()
+    {
+        $this->expectException(InvalidObjectNameException::class);
+        new TXInvalidObjectNameProviderContainer(new TXInvalidObjectNameProviderInstantiator);
     }
 
 }
