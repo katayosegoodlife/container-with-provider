@@ -10,6 +10,7 @@ use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleProvi
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleClass;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleClassParent;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidNameProvider\TXInvalidNameProviderContainer;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidNameProvider\TXInvalidNameProviderInstantiator;
 use Bellisq\ContainerWithProvider\Exceptions\{
     NotFoundException,
     InvalidProviderException
@@ -60,7 +61,7 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
     public function testInvalidNameProvider()
     {
         $this->expectException(InvalidProviderException::class);
-        new TXInvalidNameProviderContainer(new ProviderClassValidator(ProviderAbstract::class), new InvalidNameProvider\TXInvalidNameProviderInstantiator);
+        new TXInvalidNameProviderContainer(new ProviderClassValidator(ProviderAbstract::class), new TXInvalidNameProviderInstantiator);
     }
 
 }
