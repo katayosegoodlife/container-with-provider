@@ -217,6 +217,11 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
             }
         }
 
+        return $this->solveWithCandidates($candidates, $sig);
+    }
+
+    private function solveWithCandidates(array $candidates, string $sig)
+    {
         $c = count($candidates);
         if ($c === 0) {
             return $this->cache[$sig] = self::SOLVE_NOT_FOUND;
