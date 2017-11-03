@@ -45,6 +45,26 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
 
     abstract static protected function registerProviders(ProviderRegister $pr): void;
 
+    public function get($name, ?string $type = null)
+    {
+        switch ($this->solveName($name, $type)) {
+            case self::SOLVE_FOUND:
+                $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
+                $sig   = $this->generateSignature($uName, $type);
+                return $this->getInstance($this->nameCache[$sig]);
+            case self::SOLVE_TOOMANY:
+                throw new TooManyCandidatesException;
+            case self::SOLVE_NOT_FOUND:
+            default:
+                throw new NotFoundException;
+        }
+    }
+
+    public function has($name, ?string $type = null): bool
+    {
+        return self::SOLVE_FOUND === $this->solveName($name, $type);
+    }
+
     /** @var InstantiatorInterface */
     private $instantiator;
 
@@ -188,56 +208,55 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         $this->providers[$providerName] = $this->instantiator->instantiate($providerName);
     }
 
-    public function get($name, ?string $type = null)
-    {
-        switch ($this->solveName($name, $type)) {
-            case self::SOLVE_FOUND:
-                $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
-                $sig   = "{$uName}:{$type}";
-                return $this->getInstance($this->cache[$sig]);
-            case self::SOLVE_TOOMANY:
-                throw new TooManyCandidatesException;
-            case self::SOLVE_NOT_FOUND:
-            default:
-                throw new NotFoundException;
-        }
-    }
-
-    public function has($name, ?string $type = null): bool
-    {
-        return self::SOLVE_FOUND === $this->solveName($name, $type);
-    }
-
     private const SOLVE_FOUND     = 1;
     private const SOLVE_TOOMANY   = 100;
     private const SOLVE_NOT_FOUND = 10000;
 
+    /**
+     * [ signature => SOLVE_CONSTANTS ]
+     * 
+     * @var string[]
+     */
     private $cache = [];
+
+    /**
+     * [ signature => objectName ]
+     * 
+     * @var string[]
+     */
+    private $nameCache = [];
+
+    private function generateSignature(?string $uName, ?string $type): string
+    {
+        return "{$uName}:{$type}";
+    }
 
     private function solveName($name, ?string $type): int
     {
         $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
-        $sig   = "{$uName}:{$type}";
+        $sig   = $this->generateSignature($uName, $type);
+        if (isset($this->cache[$sig]))
+            return $this->cache[$sig];
         if (is_null($type)) {
             if (is_null($uName)) {
                 return $this->cache[$sig] = self::SOLVE_NOT_FOUND;
             }
             if (isset($this->objectProvider[$uName])) {
-                $this->cache[$sig] = $uName;
-                return self::SOLVE_FOUND;
+                $this->nameCache[$sig] = $uName;
+                return $this->cache[$sig]     = self::SOLVE_FOUND;
             }
             return $this->cache[$sig] = self::SOLVE_NOT_FOUND;
         }
 
         if (isset($this->typeObjectName[$type])) {
             if (count($this->typeObjectName[$type]) === 1) {
-                $this->cache[$sig] = $this->typeObjectName[$type][0];
-                return self::SOLVE_FOUND;
+                $this->nameCache[$sig] = $this->typeObjectName[$type][0];
+                return $this->cache[$sig]     = self::SOLVE_FOUND;
             }
             foreach ($this->typeObjectName[$type] as $candidateName) {
                 if ($candidateName === $uName) {
-                    $this->cache[$sig] = $uName;
-                    return self::SOLVE_FOUND;
+                    $this->nameCache[$sig] = $uName;
+                    return $this->cache[$sig]     = self::SOLVE_FOUND;
                 }
             }
             return $this->cache[$sig] = self::SOLVE_TOOMANY;
@@ -255,8 +274,8 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
             return $this->cache[$sig] = self::SOLVE_NOT_FOUND;
         }
         if ($c === 1 && count($candidates[0]) === 1) {
-            $this->cache[$sig] = $candidates[0][0];
-            return self::SOLVE_FOUND;
+            $this->nameCache[$sig] = $candidates[0][0];
+            return $this->cache[$sig]     = self::SOLVE_FOUND;
         }
         return $this->cache[$sig] = self::SOLVE_TOOMANY;
     }
