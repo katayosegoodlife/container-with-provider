@@ -234,6 +234,12 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
                 $this->cache[$sig] = $this->typeObjectName[$type][0];
                 return self::SOLVE_FOUND;
             }
+            foreach ($this->typeObjectName[$type] as $candidateName) {
+                if ($candidateName === $uName) {
+                    $this->cache[$sig] = $uName;
+                    return self::SOLVE_FOUND;
+                }
+            }
             return $this->cache[$sig] = self::SOLVE_TOOMANY;
         }
 
