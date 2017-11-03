@@ -20,8 +20,11 @@ use Bellisq\ContainerWithProvider\Exceptions\InvalidBaseClassException;
 final class ProviderClassValidator extends SubclassValidator
 {
 
-    public function __construct(string $baseClassName)
+    public function __construct(?string $baseClassName = null)
     {
+        if (is_null($baseClassName)) {
+            $baseClassName = ProviderAbstract::class;
+        }
         if (!is_a($baseClassName, ProviderAbstract::class, true)) {
             throw new InvalidBaseClassException;
         }
