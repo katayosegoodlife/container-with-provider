@@ -11,10 +11,7 @@ class TXSimpleProviderInstantiator implements InstantiatorInterface
 
     public function instantiate(string $className)
     {
-        if ($className === TXSimpleProvider::class) {
-            return new TXSimpleProvider;
-        }
-        return null;
+        return new $className;
     }
 
 }

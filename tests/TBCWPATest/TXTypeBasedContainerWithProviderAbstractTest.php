@@ -24,6 +24,8 @@ use Bellisq\ContainerWithProvider\Tests\TBCWPATest\TypeErrorContainer\TXTypeErro
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\TypeErrorContainer\TXTypeErrorProviderInstantiator;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SingletonSimpleContainer\TXSingletonSimpleContainer;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SingletonSimpleContainer\TXSingletonSimpleProviderInstantiator;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleContainerQuickLoad;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleProviderQuickLoad;
 use Bellisq\ContainerWithProvider\Exceptions\{
     NotFoundException,
     InvalidProviderException,
@@ -146,6 +148,13 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
         $sc = new TXSingletonSimpleContainer(new TXSingletonSimpleProviderInstantiator);
         $this->assertTrue($sc->get('singletonSimpleObj') == $sc->get('singletonSimpleObj'));
         $this->assertTrue($sc->get('singletonSimpleObj') === $sc->get('singletonSimpleObj'));
+    }
+
+    public function testQuickLoad()
+    {
+        $this->assertFalse(TXSimpleProviderQuickLoad::isLoaded());
+        $sc = new TXSimpleContainerQuickLoad(new TXSimpleProviderInstantiator);
+        $this->assertTrue(TXSimpleProviderQuickLoad::isLoaded());
     }
 
 }
