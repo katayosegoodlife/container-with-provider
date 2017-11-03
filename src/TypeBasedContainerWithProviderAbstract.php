@@ -48,13 +48,14 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
     public function get($name, ?string $type = null)
     {
         $solveResult = $this->solveName($name, $type);
+
         if (self::SOLVE_FOUND === $solveResult) {
             $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
             $sig   = self::generateSignature($uName, $type);
             return $this->getInstance($this->nameCache[$sig]);
-        } else {
-            self::exceptionThrow($solveResult);
         }
+        
+        self::exceptionThrow($solveResult);
     }
 
     public function has($name, ?string $type = null): bool
@@ -62,7 +63,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         return self::SOLVE_FOUND === $this->solveName($name, $type);
     }
     
-    
+
     final public function __construct(InstantiatorInterface $instantiator, ?ProviderClassValidator $providerTypeNameValidator = null, ?ValidatorInterface $objectTypeValidator = null)
     {
         $this->instantiator = $instantiator;
