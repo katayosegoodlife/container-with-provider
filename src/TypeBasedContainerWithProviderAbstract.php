@@ -127,7 +127,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         $this->typeObjectName[$objectType][] = $objectName;
     }
 
-    private function registerQuickLoad(string $providerName)
+    private function registerQuickLoad(string $providerName): void
     {
         $this->quickLoads[] = $providerName;
     }
@@ -138,7 +138,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
      * 
      * ---------------------------------------------------------------------- */
 
-    private function executeQuickLoad()
+    private function executeQuickLoad(): void
     {
         foreach ($this->quickLoads as $qlProviderName) {
             $this->providers[$qlProviderName] = $this->instantiator->instantiate($qlProviderName);
@@ -171,14 +171,14 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         return $this->singletonObjects[$validatedObjectName];
     }
 
-    private function loadProviderLazy(string $providerName)
+    private function loadProviderLazy(string $providerName): void
     {
         if (is_null($this->providers[$providerName])) {
             $this->loadProvider($providerName);
         }
     }
 
-    private function loadProvider(string $providerName)
+    private function loadProvider(string $providerName): void
     {
         $this->providers[$providerName] = $this->instantiator->instantiate($providerName);
     }
@@ -208,7 +208,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         return $this->solveByScan($type, $sig);
     }
 
-    private function solveByScan(string $typeHint, string $sig)
+    private function solveByScan(string $typeHint, string $sig): int
     {
         $candidates = [];
         foreach ($this->typeObjectName as $candidateType => $cand) {
@@ -220,7 +220,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         return $this->solveWithCandidates($candidates, $sig);
     }
 
-    private function solveWithCandidates(array $candidates, string $sig)
+    private function solveWithCandidates(array $candidates, string $sig): int
     {
         $c = count($candidates);
         if ($c === 0) {
@@ -232,7 +232,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         return $this->cache[$sig] = self::SOLVE_TOOMANY;
     }
 
-    private function solveWithExactType(array $typeBasedCandidates, string $sig, ?string $uName)
+    private function solveWithExactType(array $typeBasedCandidates, string $sig, ?string $uName): int
     {
         if (count($typeBasedCandidates) === 1) {
             return $this->foundReturn($sig, $typeBasedCandidates[0]);
@@ -245,7 +245,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         return $this->cache[$sig] = self::SOLVE_TOOMANY;
     }
 
-    private function solveWithoutType(?string $uName, string $sig)
+    private function solveWithoutType(?string $uName, string $sig): int
     {
         if (!is_null($uName) && isset($this->objectProvider[$uName])) {
             return $this->foundReturn($sig, $uName);
@@ -253,7 +253,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         return $this->cache[$sig] = self::SOLVE_NOT_FOUND;
     }
 
-    private function foundReturn(string $sig, string $objectName)
+    private function foundReturn(string $sig, string $objectName): int
     {
         $this->nameCache[$sig] = $objectName;
 
