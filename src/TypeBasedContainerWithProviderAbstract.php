@@ -197,10 +197,10 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
     private function getInstance(string $validatedObjectName)
     {
         $providerName = $this->objectProvider[$validatedObjectName];
-        $rv           = null;
-        if (is_null($this->providers[$providerName])) {
-            $this->loadProvider($providerName);
-        }
+
+        $rv = null;
+
+        $this->loadProviderLazy($providerName);
 
         if ($this->isSingleton[$validatedObjectName]) {
             if (isset($this->singletonObjects[$validatedObjectName])) {
@@ -218,6 +218,13 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
             throw new ObjectTypeErrorException;
         }
         return $rv;
+    }
+
+    private function loadProviderLazy(string $providerName)
+    {
+        if (is_null($this->providers[$providerName])) {
+            $this->loadProvider($providerName);
+        }
     }
 
     private function loadProvider(string $providerName)
