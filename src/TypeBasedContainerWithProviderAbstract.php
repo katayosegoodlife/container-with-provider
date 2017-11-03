@@ -54,7 +54,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
             $sig   = self::generateSignature($uName, $type);
             return $this->getInstance($this->nameCache[$sig]);
         }
-        
+
         self::exceptionThrow($solveResult);
     }
 
@@ -62,7 +62,6 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
     {
         return self::SOLVE_FOUND === $this->solveName($name, $type);
     }
-    
 
     final public function __construct(InstantiatorInterface $instantiator, ?ProviderClassValidator $providerTypeNameValidator = null, ?ValidatorInterface $objectTypeValidator = null)
     {
@@ -158,7 +157,6 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
      * @var string[]
      */
     private $nameCache = [];
-
 
     private function registerProvider(string $providerName): void
     {
