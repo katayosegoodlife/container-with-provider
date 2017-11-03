@@ -23,7 +23,7 @@ abstract class ProviderAbstract
      * 
      * All providers must register what they provide in this method.
      */
-    abstract public static function register(ObjectDefinitionRegister $odr);
+    abstract public static function register(ObjectDefinitionRegister $odr): void;
 
     /**
      * [ Factory ]
