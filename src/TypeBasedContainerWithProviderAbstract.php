@@ -72,16 +72,17 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         $this->objectNameValidator       = new BasicIdentifierValidator(1, 63);
         $this->objectTypeValidator       = $objectTypeValidator ?? new PassValidator;
 
-        $quickLoads = [];
+        $providerTransport = new ProviderTransport;
+        $quickLoads        = [];
 
-        $pt = new ProviderTransport;
-        static::registerProviders(new ProviderRegister($pt));
-        foreach ($pt->get() as list($providerName, $quickLoad)) {
+        static::registerProviders(new ProviderRegister($providerTransport));
+        foreach ($providerTransport->get() as list($providerName, $quickLoad)) {
             $this->registerProvider($providerName);
             if ($quickLoad) {
                 $quickLoads[] = $providerName;
             }
         }
+
         foreach ($quickLoads as $qlProviderName) {
             $this->providers[$qlProviderName] = $this->instantiator->instantiate($qlProviderName);
         }
