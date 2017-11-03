@@ -195,12 +195,12 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
                 $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
                 $sig   = "{$uName}:{$type}";
                 return $this->getInstance($this->cache[$sig]);
-            case self::SOLVE_NOT_FOUND:
-                throw new NotFoundException;
             case self::SOLVE_TOOMANY:
                 throw new TooManyCandidatesException;
+            case self::SOLVE_NOT_FOUND:
+            default:
+                throw new NotFoundException;
         }
-        return null;
     }
 
     public function has($name, ?string $type = null): bool
