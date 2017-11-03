@@ -28,6 +28,8 @@ abstract class ProviderAbstract
     /**
      * [ Factory ]
      * 
+     * Returns what this class provides.
+     * 
      * Singleton mechanism is already implemented in container so that
      * instantiating is only required in this method.
      */
