@@ -311,7 +311,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
     /**
      * [ signature => SOLVE_CONSTANTS ]
      * 
-     * @var string[]
+     * @var int[]
      */
     private $cache = [];
 
