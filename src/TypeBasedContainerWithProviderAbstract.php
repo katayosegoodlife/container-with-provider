@@ -88,76 +88,11 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         }
     }
 
-    private const SOLVE_FOUND     = 1;
-    private const SOLVE_TOOMANY   = 100;
-    private const SOLVE_NOT_FOUND = 10000;
-
-    /** @var InstantiatorInterface */
-    private $instantiator;
-
-    /**
-     * [ providerName => null | provider ]
-     * @var ProviderAbstract[]
-     */
-    private $providers = [];
-
-    /**
-     * [ objectName => isSingleton ]
+    /* -------------------------------------------------------------------------
      * 
-     * @var bool[]
-     */
-    private $isSingleton = [];
-
-    /**
-     * [ objectName => object ]
+     * Registeration
      * 
-     * @var array
-     */
-    private $singletonObjects = [];
-
-    /**
-     * [ objectName => providerName ]
-     * 
-     * @var string[]
-     */
-    private $objectProvider = [];
-
-    /**
-     * [ objectName => typeName ]
-     * 
-     * @var string[]
-     */
-    private $objectType = [];
-
-    /**
-     * [ type => [ objectName => objectName ] ]
-     * 
-     * @var array[]
-     */
-    private $typeObjectName = [];
-
-    /** @var ValidatorInterface */
-    private $providerTypeNameValidator;
-
-    /** @var ValidatorInterface */
-    private $objectNameValidator;
-
-    /** @var ValidatorInterface */
-    private $objectTypeValidator;
-
-    /**
-     * [ signature => SOLVE_CONSTANTS ]
-     * 
-     * @var string[]
-     */
-    private $cache = [];
-
-    /**
-     * [ signature => objectName ]
-     * 
-     * @var string[]
-     */
-    private $nameCache = [];
+     * ---------------------------------------------------------------------- */
 
     private function registerProvider(string $providerName): void
     {
@@ -193,6 +128,12 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         $this->objectType[$objectName]       = $objectType;
         $this->typeObjectName[$objectType][] = $objectName;
     }
+    
+    /* -------------------------------------------------------------------------
+     * 
+     * Instantiation
+     * 
+     * ---------------------------------------------------------------------- */
 
     private function getInstance(string $validatedObjectName)
     {
@@ -294,4 +235,75 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         throw new NotFoundException;
     }
 
+
+    private const SOLVE_FOUND     = 1;
+    private const SOLVE_TOOMANY   = 100;
+    private const SOLVE_NOT_FOUND = 10000;
+
+    /** @var InstantiatorInterface */
+    private $instantiator;
+
+    /**
+     * [ providerName => null | provider ]
+     * @var ProviderAbstract[]
+     */
+    private $providers = [];
+
+    /**
+     * [ objectName => isSingleton ]
+     * 
+     * @var bool[]
+     */
+    private $isSingleton = [];
+
+    /**
+     * [ objectName => object ]
+     * 
+     * @var array
+     */
+    private $singletonObjects = [];
+
+    /**
+     * [ objectName => providerName ]
+     * 
+     * @var string[]
+     */
+    private $objectProvider = [];
+
+    /**
+     * [ objectName => typeName ]
+     * 
+     * @var string[]
+     */
+    private $objectType = [];
+
+    /**
+     * [ type => [ objectName => objectName ] ]
+     * 
+     * @var array[]
+     */
+    private $typeObjectName = [];
+
+    /** @var ValidatorInterface */
+    private $providerTypeNameValidator;
+
+    /** @var ValidatorInterface */
+    private $objectNameValidator;
+
+    /** @var ValidatorInterface */
+    private $objectTypeValidator;
+
+    /**
+     * [ signature => SOLVE_CONSTANTS ]
+     * 
+     * @var string[]
+     */
+    private $cache = [];
+
+    /**
+     * [ signature => objectName ]
+     * 
+     * @var string[]
+     */
+    private $nameCache = [];
 }
