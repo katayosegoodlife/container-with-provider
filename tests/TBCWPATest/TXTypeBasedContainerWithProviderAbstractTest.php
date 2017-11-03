@@ -20,13 +20,16 @@ use Bellisq\ContainerWithProvider\Tests\TBCWPATest\InvalidObjectTypeProvider\TXI
 use Bellisq\Validator\General\SubclassValidator;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\NameConflictionProvider\TXNameConflictionProviderContainer;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\NameConflictionProvider\TXNameConflictionProviderInstantiator;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\TypeErrorContainer\TXTypeErrorContainer;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\TypeErrorContainer\TXTypeErrorProviderInstantiator;
 use Bellisq\ContainerWithProvider\Exceptions\{
     NotFoundException,
     InvalidProviderException,
     DuplicateProviderException,
     InvalidObjectNameException,
     InvalidObjectTypeException,
-    ObjectNameConflictionException
+    ObjectNameConflictionException,
+    ObjectTypeErrorException
 };
 
 
@@ -101,4 +104,10 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
         new TXNameConflictionProviderContainer(new TXNameConflictionProviderInstantiator);
     }
 
+    public function testTypeError()
+    {
+        $this->expectException(ObjectTypeErrorException::class);
+        $t = new TXTypeErrorContainer(new TXTypeErrorProviderInstantiator);
+        $t->get('typeErrorObj');
+    }
 }
