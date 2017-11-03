@@ -51,7 +51,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         $solveResult = $this->solveName($name, $type);
 
         if (self::SOLVE_FOUND === $solveResult) {
-            $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
+            $uName = $this->getUName($name);
             $sig   = self::generateSignature($uName, $type);
             return $this->getInstance($this->nameCache[$sig]);
         }
@@ -190,7 +190,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
 
     private function solveName($name, ?string $type): int
     {
-        $uName = ($this->objectNameValidator->validate($name)) ? $name : null;
+        $uName = $this->getUName($name);
         $sig   = self::generateSignature($uName, $type);
 
         if (isset($this->cache[$sig])) {
@@ -261,6 +261,11 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
             return new TooManyCandidatesException;
         }
         return new NotFoundException;
+    }
+
+    private function getUName(?string $name): ?string
+    {
+        return ($this->objectNameValidator->validate($name)) ? $name : null;
     }
 
     private const SOLVE_FOUND     = 1;
