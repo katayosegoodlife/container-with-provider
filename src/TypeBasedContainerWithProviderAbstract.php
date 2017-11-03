@@ -111,7 +111,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         if (!$this->providerNameValidator->validate($providerName)) {
             throw new InvalidProviderException;
         }
-        if (isset($this->providers[$providerName])) {
+        if (array_key_exists($providerName, $this->providers)) {
             throw new DuplicateProviderException;
         }
 
