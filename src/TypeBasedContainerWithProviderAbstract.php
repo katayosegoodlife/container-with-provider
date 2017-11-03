@@ -202,13 +202,17 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         }
 
         if (isset($this->typeObjectName[$type])) {
-            $typeBaseCandidates = $this->typeObjectName[$type];
-            return $this->solveWithExactType($typeBasedCandidates, $sig, $uName);
+            return $this->solveWithExactType($this->typeObjectName[$type], $sig, $uName);
         }
 
+        return $this->solveByScan($type, $sig);
+    }
+
+    private function solveByScan(string $typeHint, string $sig)
+    {
         $candidates = [];
         foreach ($this->typeObjectName as $candidateType => $cand) {
-            if (is_subclass_of($candidateType, $type, true)) {
+            if (is_subclass_of($candidateType, $typeHint, true)) {
                 $candidates[] = $cand;
             }
         }
@@ -223,12 +227,12 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         return $this->cache[$sig] = self::SOLVE_TOOMANY;
     }
 
-    private function solveWithExactType(array $typeBasedCandidates, string $sig, string $uName)
+    private function solveWithExactType(array $typeBasedCandidates, string $sig, ?string $uName)
     {
-        if (count($typeBaseCandidates) === 1) {
-            return $this->foundReturn($sig, $typeBaseCandidates[0]);
+        if (count($typeBasedCandidates) === 1) {
+            return $this->foundReturn($sig, $typeBasedCandidates[0]);
         }
-        foreach ($typeBaseCandidates as $candidateName) {
+        foreach ($typeBasedCandidates as $candidateName) {
             if ($candidateName === $uName) {
                 return $this->foundReturn($sig, $uName);
             }
