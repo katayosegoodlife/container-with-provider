@@ -27,7 +27,7 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
 
     public function setUp()
     {
-        $this->simpleContainer = new TXSimpleContainer(new TXSimpleProviderInstantiator, new ProviderClassValidator(ProviderAbstract::class));
+        $this->simpleContainer = new TXSimpleContainer(new TXSimpleProviderInstantiator);
     }
 
     public function testSimpleContainer()
@@ -64,13 +64,13 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
     public function testInvalidNameProvider()
     {
         $this->expectException(InvalidProviderException::class);
-        new TXInvalidNameProviderContainer(new TXInvalidNameProviderInstantiator, new ProviderClassValidator(ProviderAbstract::class));
+        new TXInvalidNameProviderContainer(new TXInvalidNameProviderInstantiator);
     }
 
     public function testDuplicateNameProvider()
     {
         $this->expectException(DuplicateProviderException::class);
-        new TXDuplicateNameProviderContainer(new TXDuplicateNameProviderInstantiator, new ProviderClassValidator(ProviderAbstract::class));
+        new TXDuplicateNameProviderContainer(new TXDuplicateNameProviderInstantiator);
     }
 
 }

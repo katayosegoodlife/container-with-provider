@@ -98,12 +98,12 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
     /** @var ValidatorInterface */
     private $objectTypeValidator;
 
-    final public function __construct(InstantiatorInterface $instantiator, ProviderClassValidator $providerTypeNameValidator, ?ValidatorInterface $objectTypeValidator = null)
+    final public function __construct(InstantiatorInterface $instantiator, ?ProviderClassValidator $providerTypeNameValidator = null, ?ValidatorInterface $objectTypeValidator = null)
     {
         $this->instantiator = $instantiator;
         $this->providers    = [];
 
-        $this->providerTypeNameValidator = $providerTypeNameValidator;
+        $this->providerTypeNameValidator = $providerTypeNameValidator ?? new ProviderClassValidator(ProviderAbstract::class);
         $this->objectNameValidator       = new BasicIdentifierValidator(1, 63);
         $this->objectTypeValidator       = $objectTypeValidator ?? new PassValidator;
 
