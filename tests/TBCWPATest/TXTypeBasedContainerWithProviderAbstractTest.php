@@ -26,6 +26,7 @@ use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SingletonSimpleContainer\TXSi
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SingletonSimpleContainer\TXSingletonSimpleProviderInstantiator;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleContainerQuickLoad;
 use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleProviderQuickLoad;
+use Bellisq\ContainerWithProvider\Tests\TBCWPATest\SimpleContainer\TXSimpleContainerMany;
 use Bellisq\ContainerWithProvider\Exceptions\{
     NotFoundException,
     InvalidProviderException,
@@ -33,7 +34,8 @@ use Bellisq\ContainerWithProvider\Exceptions\{
     InvalidObjectNameException,
     InvalidObjectTypeException,
     ObjectNameConflictionException,
-    ObjectTypeErrorException
+    ObjectTypeErrorException,
+    TooManyCandidatesException
 };
 
 
@@ -155,6 +157,63 @@ class TXTypeBasedContainerWithProviderAbstractTest extends TestCase
         $this->assertFalse(TXSimpleProviderQuickLoad::isLoaded());
         $sc = new TXSimpleContainerQuickLoad(new TXSimpleProviderInstantiator);
         $this->assertTrue(TXSimpleProviderQuickLoad::isLoaded());
+    }
+
+    public function testTooManyHas()
+    {
+        $sc = new TXSimpleContainerMany(new TXSimpleProviderInstantiator);
+        $this->assertTrue($sc->has('simpleObj1'));
+        $this->assertTrue($sc->has('simpleObj2'));
+        $this->assertFalse($sc->has('valid_name'));
+        $this->assertFalse($sc->has('334_ivalid_name'));
+        $this->assertFalse($sc->has(null));
+        $this->assertTrue($sc->has('simpleObj1', TXSimpleClass::class));
+        $this->assertTrue($sc->has('simpleObj2', TXSimpleClass::class));
+        $this->assertFalse($sc->has('valid_name', TXSimpleClass::class));
+        $this->assertFalse($sc->has('334_invalid_name', TXSimpleClass::class));
+        $this->assertFalse($sc->has(null, TXSimpleClass::class));
+    }
+
+    public function testTooManyGet1()
+    {
+        $this->expectException(TooManyCandidatesException::class);
+        $sc = new TXSimpleContainerMany(new TXSimpleProviderInstantiator);
+        $sc->get('valid_name', TXSimpleClass::class);
+    }
+
+    public function testTooManyGet2()
+    {
+        $this->expectException(TooManyCandidatesException::class);
+        $sc = new TXSimpleContainerMany(new TXSimpleProviderInstantiator);
+        $sc->get('334_invalid_name', TXSimpleClass::class);
+    }
+
+    public function testTooManyGet3()
+    {
+        $this->expectException(TooManyCandidatesException::class);
+        $sc = new TXSimpleContainerMany(new TXSimpleProviderInstantiator);
+        $sc->get(null, TXSimpleClass::class);
+    }
+
+    public function testTooManyGet4()
+    {
+        $this->expectException(TooManyCandidatesException::class);
+        $sc = new TXSimpleContainerMany(new TXSimpleProviderInstantiator);
+        $sc->get('valid_name', TXSimpleClassParent::class);
+    }
+
+    public function testTooManyGet5()
+    {
+        $this->expectException(TooManyCandidatesException::class);
+        $sc = new TXSimpleContainerMany(new TXSimpleProviderInstantiator);
+        $sc->get('334_invalid_name', TXSimpleClassParent::class);
+    }
+
+    public function testTooManyGet6()
+    {
+        $this->expectException(TooManyCandidatesException::class);
+        $sc = new TXSimpleContainerMany(new TXSimpleProviderInstantiator);
+        $sc->get(null, TXSimpleClassParent::class);
     }
 
 }
