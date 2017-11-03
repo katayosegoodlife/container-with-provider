@@ -6,6 +6,7 @@ use Bellisq\TypeBasedContainer\TypeBasedContainerInterface;
 use Bellisq\Instantiator\InstantiatorInterface;
 use Bellisq\Validator\{
     ValidatorInterface,
+    PassValidator,
     General\BasicIdentifierValidator
 };
 use Bellisq\ContainerWithProvider\{
@@ -21,9 +22,11 @@ use Bellisq\ContainerWithProvider\Exceptions\{
     InvalidProviderException,
     DuplicateProviderException,
     InvalidObjectNameException,
+    InvalidObjectTypeException,
     ObjectNameConflictionException,
     NotFoundException,
-    TooManyCandidatesException
+    TooManyCandidatesException,
+    ObjectTypeErrorException
 };
 
 
@@ -73,6 +76,13 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
     private $objectProvider = [];
 
     /**
+     * [ objectName => typeName ]
+     * 
+     * @var string[]
+     */
+    private $objectType = [];
+
+    /**
      * [ type => [ objectName => objectName ] ]
      * 
      * @var array[]
@@ -80,18 +90,22 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
     private $typeObjectName = [];
 
     /** @var ValidatorInterface */
-    private $providerNameValidator;
+    private $providerTypeNameValidator;
 
     /** @var ValidatorInterface */
     private $objectNameValidator;
 
-    final public function __construct(InstantiatorInterface $instantiator, ProviderClassValidator $providerNameValidator)
+    /** @var ValidatorInterface */
+    private $objectTypeValidator;
+
+    final public function __construct(InstantiatorInterface $instantiator, ProviderClassValidator $providerTypeNameValidator, ?ValidatorInterface $objectTypeValidator = null)
     {
         $this->instantiator = $instantiator;
         $this->providers    = [];
 
-        $this->providerNameValidator = $providerNameValidator;
-        $this->objectNameValidator   = new BasicIdentifierValidator(1, 63);
+        $this->providerTypeNameValidator = $providerTypeNameValidator;
+        $this->objectNameValidator       = new BasicIdentifierValidator(1, 63);
+        $this->objectTypeValidator       = $objectTypeValidator ?? new PassValidator;
 
         $quickLoads = [];
 
@@ -110,7 +124,7 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
 
     private function registerProvider(string $providerName): void
     {
-        if (!$this->providerNameValidator->validate($providerName)) {
+        if (!$this->providerTypeNameValidator->validate($providerName)) {
             throw new InvalidProviderException;
         }
         if (array_key_exists($providerName, $this->providers)) {
@@ -131,29 +145,42 @@ abstract class TypeBasedContainerWithProviderAbstract implements TypeBasedContai
         if (!$this->objectNameValidator->validate($objectName)) {
             throw new InvalidObjectNameException;
         }
+        if (!$this->objectTypeValidator->validate($objectType)) {
+            throw new InvalidObjectTypeException;
+        }
         if (isset($this->objectProvider[$objectName])) {
             throw new ObjectNameConflictionException;
         }
         $this->objectProvider[$objectName]   = $providerName;
         $this->isSingleton[$objectName]      = $isSingleton;
+        $this->objectType[$objectName]       = $objectType;
         $this->typeObjectName[$objectType][] = $objectName;
     }
 
     private function getInstance(string $validatedObjectName)
     {
         $providerName = $this->objectProvider[$validatedObjectName];
+        $rv           = null;
         if (is_null($this->providers[$providerName])) {
             $this->loadProvider($providerName);
         }
 
         if ($this->isSingleton[$validatedObjectName]) {
             if (isset($this->singletonObjects[$validatedObjectName])) {
-                return $this->singletonObjects[$validatedObjectName];
+                $rv = $this->singletonObjects[$validatedObjectName];
+            } else {
+                $this->singletonObjects[$validatedObjectName] = $this->providers[$providerName]->getInstance($validatedObjectName);
+
+                $rv = $this->singletonObjects[$validatedObjectName];
             }
-            $this->singletonObjects[$validatedObjectName] = $this->providers[$providerName]->getInstance($validatedObjectName);
         } else {
-            return $this->providers[$providerName]->getInstance($validatedObjectName);
+            $rv = $this->providers[$providerName]->getInstance($validatedObjectName);
         }
+
+        if (!is_a($rv, $this->objectType[$validatedObjectName])) {
+            throw new ObjectTypeErrorException;
+        }
+        return $rv;
     }
 
     private function loadProvider(string $providerName)
